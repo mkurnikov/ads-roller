@@ -1,0 +1,11 @@
+version: "2.4"
+services:
+    db:
+        image: postgres:latest
+        restart: always
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./pg_data:/var/lib/postgresql/data
+        env_file: ./.env
+
