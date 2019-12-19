@@ -1,7 +1,7 @@
 #[derive(Queryable, Debug, PartialEq)]
 pub struct Ad {
-    pub id: usize,
+    pub id: i32,
     pub url: String,
-    pub num_prepaid_shows: usize,
+    pub num_prepaid_shows: i32,
     pub categories: Vec<String>,
 }

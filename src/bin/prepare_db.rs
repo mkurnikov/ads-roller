@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 use ads_roller::db::get_connection;
 
-const CONFIG_FPATH: &'static str = "resources/banners.csv";
+const CONFIG_FPATH: &str = "resources/banners.csv";
 
 #[derive(Deserialize)]
 pub struct AdRecord {
@@ -19,7 +19,7 @@ pub struct AdRecord {
 
 impl AdRecord {
     pub fn get_categories(&self) -> Vec<String> {
-        return vec![
+        vec![
             &self.category1,
             &self.category2,
             &self.category3,
@@ -29,7 +29,7 @@ impl AdRecord {
         .iter()
         .filter(|cat| cat.is_some())
         .map(|cat| cat.as_ref().unwrap().to_string())
-        .collect();
+        .collect()
     }
 }
 

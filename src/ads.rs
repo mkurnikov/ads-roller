@@ -14,11 +14,7 @@ pub fn compute_ad_probability(ad: &Ad, total_num_ads: usize) -> f32 {
     standard_ad_probability * (1.0 - 0.1 * ad.categories.len() as f32)
 }
 
-pub fn get_distribution(
-    ads: &Vec<Ad>,
-    total_ads: usize,
-    last_ad: Option<Ad>,
-) -> WeightedIndex<f32> {
+pub fn get_distribution(ads: &[Ad], total_ads: usize, last_ad: Option<Ad>) -> WeightedIndex<f32> {
     let probs: Vec<f32> = ads
         .iter()
         .map(|ad| {
@@ -30,6 +26,7 @@ pub fn get_distribution(
             compute_ad_probability(ad, total_ads)
         })
         .collect();
+
     WeightedIndex::new(probs).unwrap()
 }
 
