@@ -9,7 +9,7 @@ use rocket::http::RawStr;
 use serde::Serialize;
 
 use ads_roller::ads::get_distribution;
-use ads_roller::db::{count_ads, get_connection, select_matching_ads};
+use ads_roller::db::{count_ads, decrement_ad_prepaid_shows, get_connection, select_matching_ads};
 
 #[derive(Serialize)]
 struct AdUrl {
@@ -36,8 +36,11 @@ fn fetch_ad(
     let mut rng = thread_rng();
 
     let ad_index = dist.sample(&mut rng);
+    let selected_ad = ads.get(ad_index).unwrap();
+    decrement_ad_prepaid_shows(selected_ad, &conn);
+
     let ad_url = AdUrl {
-        url: ads.get(ad_index).unwrap().url.clone(),
+        url: selected_ad.url.clone(),
     };
     serde_json::to_string(&ad_url).unwrap()
 }

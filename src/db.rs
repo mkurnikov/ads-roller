@@ -32,3 +32,13 @@ pub fn count_ads(conn: &PgConnection) -> usize {
     use crate::schema::ads::dsl::*;
     ads.select(count(id)).first::<i64>(conn).unwrap() as usize
 }
+
+pub fn decrement_ad_prepaid_shows(ad: &Ad, conn: &PgConnection) {
+    use crate::schema::ads::dsl::*;
+
+    let affected_rows = diesel::update(ads.filter(id.eq(ad.id)))
+        .set(num_prepaid_shows.eq(num_prepaid_shows - 1))
+        .execute(conn)
+        .unwrap();
+    assert_eq!(affected_rows, 1)
+}
