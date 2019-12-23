@@ -21,9 +21,9 @@ fn compute_ad_probability(ad: &Ad, total_num_ads: usize, is_last_ad: bool) -> f3
 fn get_distribution(ads: &[Ad], total_ads: usize, last_ad: Option<Ad>) -> WeightedIndex<f32> {
     let probs: Vec<f32> = ads
         .iter()
-        .map(|ad| match last_ad {
-            Some(ref last_ad) => compute_ad_probability(ad, total_ads, ad == last_ad),
-            None => compute_ad_probability(ad, total_ads, false),
+        .map(|ad| {
+            let is_last_ad = last_ad.is_some() && last_ad.as_ref().unwrap() == ad;
+            compute_ad_probability(ad, total_ads, is_last_ad)
         })
         .collect();
 
