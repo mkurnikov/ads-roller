@@ -1,3 +1,7 @@
+## Compilation
+
+Requires **nightly** compiler (for Rocket). 
+
 ## How to run
 
 ```
