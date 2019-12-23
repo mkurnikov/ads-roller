@@ -4,6 +4,7 @@
 extern crate rocket;
 
 use rocket::http::RawStr;
+use rocket::Rocket;
 use serde::Serialize;
 
 use ads_roller::{ads, db};
@@ -38,6 +39,10 @@ fn fetch_ad(
     serde_json::to_string(&ad_url).unwrap()
 }
 
+fn get_rocket_instance() -> Rocket {
+    rocket::ignite().mount("/", routes![fetch_ad])
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![fetch_ad]).launch();
+    get_rocket_instance().launch();
 }
