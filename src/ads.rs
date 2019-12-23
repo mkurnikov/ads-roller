@@ -18,11 +18,11 @@ fn compute_ad_probability(ad: &Ad, total_num_ads: usize, is_last_ad: bool) -> f3
     standard_ad_probability * (1.0 - 0.1 * ad.categories.len() as f32)
 }
 
-fn get_distribution(ads: &[Ad], total_ads: usize, last_ad: Option<Ad>) -> WeightedIndex<f32> {
+fn get_distribution(ads: &[Ad], total_ads: usize, last_ad_id: Option<i32>) -> WeightedIndex<f32> {
     let probs: Vec<f32> = ads
         .iter()
         .map(|ad| {
-            let is_last_ad = last_ad.is_some() && last_ad.as_ref().unwrap() == ad;
+            let is_last_ad = last_ad_id.is_some() && last_ad_id.unwrap() == ad.id;
             compute_ad_probability(ad, total_ads, is_last_ad)
         })
         .collect();
@@ -30,8 +30,8 @@ fn get_distribution(ads: &[Ad], total_ads: usize, last_ad: Option<Ad>) -> Weight
     WeightedIndex::new(probs).unwrap()
 }
 
-pub fn get_sampled_ad(ads: &[Ad], total_ads: usize, last_ad: Option<Ad>) -> &Ad {
-    let dist = get_distribution(&ads, total_ads, last_ad);
+pub fn get_sampled_ad(ads: &[Ad], total_ads: usize, last_ad_id: Option<i32>) -> &Ad {
+    let dist = get_distribution(&ads, total_ads, last_ad_id);
     let mut rng = thread_rng();
 
     let ad_index = dist.sample(&mut rng);

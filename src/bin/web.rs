@@ -5,9 +5,15 @@ extern crate rocket;
 
 use rocket::http::RawStr;
 use rocket::Rocket;
+use seqlock::SeqLock;
 use serde::Serialize;
 
 use ads_roller::{ads, db};
+use lazy_static::lazy_static;
+
+lazy_static! {
+    static ref LAST_AD_ID: SeqLock<Option<i32>> = SeqLock::new(None);
+}
 
 #[derive(Serialize)]
 struct AdUrl {
@@ -30,8 +36,13 @@ fn fetch_ad(
     let ads = db::select_matching_ads(selected_categories, &conn);
     let total_ads = db::count_ads(&conn);
 
-    let selected_ad = ads::get_sampled_ad(&ads, total_ads, None);
+    let last_ad_id = LAST_AD_ID.read();
+    let selected_ad = ads::get_sampled_ad(&ads, total_ads, last_ad_id);
     db::decrement_ad_prepaid_shows(selected_ad, &conn);
+
+    {
+        *(LAST_AD_ID.lock_write()) = Some(selected_ad.id);
+    }
 
     let ad_url = AdUrl {
         url: selected_ad.url.clone(),
